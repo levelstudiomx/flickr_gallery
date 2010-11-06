@@ -64,11 +64,10 @@ var gallery = {
     },options);
 
     $.getJSON(settings.flickr_resource_uri+"&tags=\""+settings.tag+"\"&tag_mode=all&lang=en-us&format=json&jsoncallback=?", function (data){
-       //$.each(data.items, function (i,item){
-       // images.push(item.media.m.split('_m.jpg').join('_b.jpg'));
-       //});
-       //gallery.preloadImages(images);
-       console.log(data.photos.photo); 
+       $.each(data.photos.photo, function (i,item){
+        images.push('http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '_m.jpg');
+       });
+       gallery.preloadImages(images);
     });
   },
   
