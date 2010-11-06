@@ -17,7 +17,7 @@
     <script type="text/javascript" src="js/jquery-1.4.js"></script>
     <script type="text/javascript" src="js/json2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
-    <script type="text/javascript" src="js/jquery-resize.js"></script>
+
     
     <script type="text/javascript">
     
@@ -54,55 +54,36 @@
     }); 
 })(jQuery);
 
-var images = [];
 var gallery = {
   
-  flickrGet: function(flickrID, options){
+  flickrGet: function(options){
     images = [];
-    ids = flickrID.split(',');
     settings = $.extend({
-      flickr_resource_uri: "http://api.flickr.com/services/feeds/photos_public.gne",
+      flickr_resource_uri:"http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=7cb087d5c47cf5b3abc506d250182c60" ,
       tag: "",
     },options);
 
-    for(var i in ids) {
-       if(i == ids.length -1){
-         doPreload = true; 
-       }else{
-         doPreload = false; 
-       }
-       gallery.makeRequest(ids[i],doPreload);
-    }
-  },
-
-  makeRequest: function(id,doPreload){
-    $.getJSON(settings.flickr_resource_uri+"?id="+id+"&tags=\""+settings.tag+"\"&lang=en-us&format=json&jsoncallback=?", function (data){
-       $.each(data.items, function (i,item){
-        images.push(item.media.m.split('_m.jpg').join('_b.jpg'));
-        });
-       if(doPreload){
-          gallery.preloadImages(images); 
-       }
+    $.getJSON(settings.flickr_resource_uri+"&tags=\""+settings.tag+"\"&tag_mode=all&lang=en-us&format=json&jsoncallback=?", function (data){
+       //$.each(data.items, function (i,item){
+       // images.push(item.media.m.split('_m.jpg').join('_b.jpg'));
+       //});
+       //gallery.preloadImages(images);
+       console.log(data.photos.photo); 
     });
   },
   
   preloadImages: function(images){
+    console.log(images);
      $.preload(images, {
         init: function(loaded, total) {
             $("#indicator").html("Loaded: "+loaded+"/"+total);
-            $("#full-screen").hide();
         },
         loaded: function(img, loaded, total) {
-            perc = loaded/total*100;
-            $("#indicator").html("Loaded: "+loaded+"/"+total+' '+parseInt(perc)+'%');
-            $(img).addClass('resized');
+            $("#indicator").html("Loaded: "+loaded+"/"+total);
             $("#full-screen").append(img);
-            console.log($(window).height());
-            $('.resized').resize({maxHeight: $(window).height() });
         },
         loaded_all: function(loaded, total) {
             $("#indicator").html("Loaded: "+loaded+"/"+total+". Done!");
-            $("#full-screen").fadeIn('slow');
         }
     });
 
@@ -120,7 +101,7 @@ var gallery = {
 
 $(function() {
     gallery.setupAjaxCallbacks();
-    gallery.flickrGet('14763639@N07,27435083@N06',{tag: ''});
+    gallery.flickrGet({tag:"bruggi,3g0ph0t0"});
 });
 </script>
 
