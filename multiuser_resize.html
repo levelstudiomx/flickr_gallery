@@ -17,6 +17,7 @@
     <script type="text/javascript" src="js/jquery-1.4.js"></script>
     <script type="text/javascript" src="js/json2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery-resize.js"></script>
     
     <script type="text/javascript">
     
@@ -66,7 +67,7 @@ var gallery = {
 
     for(var i in ids) {
        if(i == ids.length -1){
-         doPreload = true; console.log('preloading');
+         doPreload = true; 
        }else{
          doPreload = false; 
        }
@@ -86,17 +87,21 @@ var gallery = {
   },
   
   preloadImages: function(images){
-    console.log(images);
      $.preload(images, {
         init: function(loaded, total) {
             $("#indicator").html("Loaded: "+loaded+"/"+total);
+            $("#full-screen").hide();
         },
         loaded: function(img, loaded, total) {
-            $("#indicator").html("Loaded: "+loaded+"/"+total);
+            perc = loaded/total*100;
+            $("#indicator").html("Loaded: "+loaded+"/"+total+' '+parseInt(perc)+'%');
+            $(img).addClass('resized');
             $("#full-screen").append(img);
+            $('.resized').resize({maxHeight: 150});
         },
         loaded_all: function(loaded, total) {
             $("#indicator").html("Loaded: "+loaded+"/"+total+". Done!");
+            $("#full-screen").fadeIn('slow');
         }
     });
 
